@@ -1,25 +1,48 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
 {
-	"name": "nodejs + ts",
-	"image": "mcr.microsoft.com/devcontainers/typescript-node:16-bullseye",
-	"features": {
-		"ghcr.io/devcontainers/features/docker-in-docker:1": {},
-		"ghcr.io/devcontainers-contrib/features/jest:1": {}
-	},
+  "name": "nodejs + ts",
 
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:16",
+  // "dockerComposeFile": ["docker-compose.yml"],
+  // "service": "backend",
 
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	"forwardPorts": [],
+  // "workspaceFolder": "/workspace",
 
-	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "yarn install",
+  // Features to add to the dev container. More info: https://containers.dev/features.
+  // "features": {
+  //   "ghcr.io/devcontainers/features/docker-in-docker:1": {},
+  //   "ghcr.io/devcontainers-contrib/features/jest:1": {}
+  // },
 
-	// Configure tool-specific properties.
-	// "customizations": {},
+  "extensions": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "ms-azuretools.vscode-docker"
+  ],
 
-	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  // "forwardPorts": [],
+  "portsAttributes": {
+    "8000": {
+      "label": "frontend",
+      "onAutoForward": "notify"
+    },
+    "8001": {
+      "label": "backend-http",
+      "onAutoForward": "notify"
+    },
+    "8002": {
+      "label": "backend-database",
+      "onAutoForward": "notify"
+    }
+  },
+
+  // Use 'postCreateCommand' to run commands after the container is created.
+  "postCreateCommand": "yarn install"
+
+  // Configure tool-specific properties.
+  // "customizations": {},
+
+  // "remoteUser": "node"
 }
