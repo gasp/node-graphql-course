@@ -5,7 +5,7 @@ import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHt
 import express, { Express, Request, Response } from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
-import { typeDefs, resolvers } from './schema.js'
+import { schema } from './schema.js'
 import dotenv from 'dotenv'
 
 type MyContext = {
@@ -19,8 +19,7 @@ const app: Express = express()
 const httpServer = http.createServer(app)
 
 const server = new ApolloServer<MyContext>({
-  typeDefs,
-  resolvers,
+  schema: schema,
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
 })
 
