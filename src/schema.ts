@@ -1,9 +1,11 @@
 const books = [
   {
+    id: 'a0',
     title: 'The Awakening',
     author: 'Kate Chopin',
   },
   {
+    id: 'b1',
     title: 'City of Glass',
     author: 'Paul Auster',
   },
@@ -14,6 +16,7 @@ export const typeDefs = `#graphql
 
   # This "Book" type defines the queryable fields for every book in our data source.
   type Book {
+    id: String
     title: String
     author: String
   }

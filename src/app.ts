@@ -24,7 +24,6 @@ const server = new ApolloServer<MyContext>({
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
 })
 
-console.log('plop')
 // Ensure we wait for our server to start
 await server.start()
 
