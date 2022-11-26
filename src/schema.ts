@@ -1,3 +1,11 @@
+import {
+  GraphQLID,
+  GraphQLNonNull,
+  GraphQLObjectType,
+  GraphQLSchema,
+  GraphQLString,
+} from 'graphql'
+
 const books = [
   {
     id: 'a0',
@@ -11,26 +19,26 @@ const books = [
   },
 ]
 
-export const typeDefs = `#graphql
-  # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
-
-  # This "Book" type defines the queryable fields for every book in our data source.
-  type Book {
-    id: String
-    title: String
-    author: String
-  }
-
-  # The "Query" type is special: it lists all of the available queries that
-  # clients can execute, along with the return type for each. In this
-  # case, the "books" query returns an array of zero or more Books (defined above).
-  type Query {
-    books: [Book]
-  }
-`
-
-export const resolvers = {
-  Query: {
-    books: () => books,
-  },
-}
+export const schema = new GraphQLSchema({
+  query: new GraphQLObjectType({
+    name: 'Query',
+    fields: {
+      book: {
+        type: new GraphQLObjectType({
+          name: 'Book',
+          description: 'A book',
+          fields: {
+            id: { type: GraphQLID },
+            title: { type: new GraphQLNonNull(GraphQLString) },
+          },
+        }),
+        args: {
+          id: { type: GraphQLString },
+        },
+        resolve: (_, { id }) => {
+          return books.find(b => b.id === id)
+        },
+      },
+    },
+  }),
+})
