@@ -1,15 +1,51 @@
+import http from 'http'
+import { ApolloServer } from '@apollo/server'
+import { expressMiddleware } from '@apollo/server/express4'
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer'
 import express, { Express, Request, Response } from 'express'
+import cors from 'cors'
+import bodyParser from 'body-parser'
+import { typeDefs, resolvers } from './schema.js'
 import dotenv from 'dotenv'
 
-dotenv.config()
+type MyContext = {
+  token?: String
+}
 
-const app: Express = express()
+dotenv.config()
 const port = process.env.API_PORT
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Express + TypeScript Server')
+const app: Express = express()
+const httpServer = http.createServer(app)
+
+const server = new ApolloServer<MyContext>({
+  typeDefs,
+  resolvers,
+  plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
 })
 
-app.listen(port, () => {
-  console.log(`⚡️[server]: Express is running at https://localhost:${port}`)
+console.log('plop')
+// Ensure we wait for our server to start
+await server.start()
+
+app.use(
+  '/graphql',
+  cors<cors.CorsRequest>(),
+  bodyParser.json(),
+  // expressMiddleware accepts the same arguments:
+  // an Apollo Server instance and optional configuration options
+  expressMiddleware(server, {
+    context: async ({ req }) => ({ token: req.headers.token }),
+  }),
+)
+
+app.get('/', (req: Request, res: Response) => {
+  res.send('Express + Apollo + TypeScript Server')
 })
+
+app.get('/health', (req: Request, res: Response) => {
+  res.send('i am alive')
+})
+
+await new Promise<void>(resolve => httpServer.listen({ port }, resolve))
+console.log(`⚡️[server]: Server running at https://localhost:${port}`)
