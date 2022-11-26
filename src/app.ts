@@ -1,16 +1,13 @@
 import http from 'http'
+import express, { Express, Request, Response } from 'express'
+import bodyParser from 'body-parser'
+import cors from 'cors'
+import dotenv from 'dotenv'
 import { ApolloServer } from '@apollo/server'
 import { expressMiddleware } from '@apollo/server/express4'
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer'
-import express, { Express, Request, Response } from 'express'
-import cors from 'cors'
-import bodyParser from 'body-parser'
 import { schema } from './schema.js'
-import dotenv from 'dotenv'
-
-type MyContext = {
-  token?: String
-}
+import { Context } from './types.js'
 
 dotenv.config()
 const port = process.env.API_PORT
@@ -18,7 +15,7 @@ const port = process.env.API_PORT
 const app: Express = express()
 const httpServer = http.createServer(app)
 
-const server = new ApolloServer<MyContext>({
+const server = new ApolloServer<Context>({
   schema: schema,
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
 })
