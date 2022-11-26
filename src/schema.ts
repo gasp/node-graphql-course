@@ -92,10 +92,29 @@ const bookSchema = {
 
 export const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
-    name: 'Query',
+    name: 'Queries',
     fields: {
       author: authorSchema,
       book: bookSchema,
+    },
+  }),
+
+  mutation: new GraphQLObjectType({
+    name: 'Mutations',
+    description: 'These are the things we can change',
+    fields: {
+      createAuthor: {
+        type: authorSchema.type,
+        args: {
+          // this can be useful https://graphql.org/graphql-js/type/#graphqlinputobjecttype
+          name: { type: new GraphQLNonNull(GraphQLString) },
+        },
+        resolve: (a, { name }: { name: string }) => {
+          const newAuthor = { id: `a${Math.floor(Math.random() * 999)}`, name }
+          authors.push(newAuthor)
+          return newAuthor
+        },
+      },
     },
   }),
 })
