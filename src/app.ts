@@ -1,14 +1,21 @@
+import http from 'http'
+import path from 'path'
 import express, { Express, Request, Response } from 'express'
+import { Server } from 'socket.io'
+
 import dotenv from 'dotenv'
+
+const app: Express = express()
+const server = http.createServer(app)
+const io = new Server(server)
 
 dotenv.config()
 
-const app: Express = express()
 const port = process.env.API_PORT
 
 app.use(express.json())
+app.use(express.static('public'))
 
-// my database
 type Drink = {
   name: string
   count: number
@@ -29,8 +36,7 @@ const calcPrices = (): Array<number> => {
 }
 
 app.get('/', (req: Request, res: Response) => {
-  const prices = calcPrices()
-  res.send(`beer price: ${prices[0]}`) 
+  res.sendFile('index.html', {root: path.join(__dirname, '..', 'client')})
 })
 
 app.post('/increment', (req:Request, res:Response) => {
@@ -43,6 +49,10 @@ app.post('/increment', (req:Request, res:Response) => {
   res.json({drinks, prices: calcPrices()})
 })
 
-app.listen(port, () => {
+io.on('connection', (socket) => {
+  console.log('a user connected')
+})
+
+server.listen(port, () => {
   console.log(`⚡️[server]: Express is running at https://localhost:${port}`)
 })
