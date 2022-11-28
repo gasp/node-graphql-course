@@ -5,9 +5,14 @@ import { Server } from 'socket.io'
 
 import dotenv from 'dotenv'
 
-const app: Express = express()
+type App = {
+  io?: Server
+} & Express
+
+const app: App = express()
 const server = http.createServer(app)
 const io = new Server(server)
+app.io = io
 
 dotenv.config()
 
@@ -46,6 +51,8 @@ app.post('/increment', (req:Request, res:Response) => {
       drink.count ++
     }
   }
+  if (!app.io) throw new Error("io should be instanciated")
+  app.io.emit('newPrices', calcPrices())
   res.json({drinks, prices: calcPrices()})
 })
 

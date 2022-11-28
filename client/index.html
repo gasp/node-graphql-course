@@ -6,9 +6,10 @@
   <script src="/socket.io/socket.io.js"></script>
   <script>
     var socket = io();
+    socket.on('newPrices', (prices) => console.log(prices))
   </script>
 </head>
 <body>
-  
+  look at the console
 </body>
 </html>
